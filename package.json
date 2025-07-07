@@ -1,6 +1,6 @@
 {
     "dependencies": {
-        "@prisma/client": "^5.15.0",
+        "@prisma/client": "^5.22.0",
         "bcrypt": "^5.1.1",
         "dotenv": "^16.0.2",
         "express": "^4.18.1",
@@ -21,6 +21,23 @@
         "eslint-config-prettier": "^8.8.0",
         "eslint-plugin-import": "^2.27.5",
         "nodemon": "^2.0.19",
-        "prisma": "^5.15.0"
-    }
+        "prisma": "^5.22.0"
+    },
+    "prisma": {
+        "schema": "./prisma/schema.prisma"
+    },
+    "name": "dbs-practical-v2-funnifox-1",
+    "version": "1.0.0",
+    "description": "1. Clone this repository",
+    "main": ".eslintrc.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/soc-DBS/dbs-practical-v2-funnifox.git"
+    },
+    "author": "Javier Tan Jia Ye",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/soc-DBS/dbs-practical-v2-funnifox/issues"
+    },
+    "homepage": "https://github.com/soc-DBS/dbs-practical-v2-funnifox#readme"
 }
