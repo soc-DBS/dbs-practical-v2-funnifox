@@ -19,7 +19,7 @@ module.exports.calculateStudentsGPA = function calculateStudentsGPA() {
             console.log('Calculating students GPA');
         })
         .catch(function (error) {
-            throw error;
+            throw error;    
         });
 };
 
