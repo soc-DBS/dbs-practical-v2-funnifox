@@ -13,6 +13,9 @@ model course {
   offeredBy String   @map("offered_by") @db.VarChar(5)
   crseFee   Decimal  @map("crse_fee") @db.Decimal(7, 2)
   labFee    Decimal? @map("lab_fee") @db.Decimal(7, 2)
+
+  fkCourseOfferedByDepartment department @relation("fkCourseOfferedByDepartment", fields:[offeredBy], references: [deptCode], onDelete: NoAction, onUpdate: NoAction, map:"fk_course_offered_by")
+  studentCrseCodeFk student[] @relation("studentCrseCodeFk")
 }
 
 model department {
@@ -24,6 +27,10 @@ model department {
   budget           Decimal?  @db.Decimal(9, 2)
   expenditure      Decimal?  @db.Decimal(9, 2)
   hodApptDate      DateTime? @map("hod_appt_date") @db.Date
+
+  departmentHodToStaff staff @relation("departmentHodToStaff", fields: [hod], references: [staffNo], onDelete: NoAction, onUpdate: NoAction, map: "dept_hod_fk")
+  staffDeptCodeToDepartment staff[] @relation("staffDeptCodeToDepartment")
+  fkCourseOfferedByDepartment course[] @relation("fkCourseOfferedByDepartment")
 }
 
 model staff {
@@ -43,6 +50,13 @@ model staff {
   typeOfEmployment  String   @map("type_of_employment") @db.VarChar(2)
   highestQln        String   @map("highest_qln") @db.VarChar(10)
   designation       String   @db.VarChar(20)
+
+
+  departmentHodTostaff department[] @relation("departmentHodToStaff")
+  staffDeptCodeToDepartment department @relation("staffDeptCodeToDepartment", fields: [deptCode], references: [deptCode], onDelete: NoAction, onUpdate: NoAction, map: "staff_dept_code_fk")
+  staffDependent staffDependent[]
+  modModCoordFk module[] @relation("modModCoordFk")
+
 }
 
 model staffBackup {
@@ -86,7 +100,13 @@ model module {
   modCode String @id @map("mod_code") @db.VarChar(10)
   modName String @map("mod_name") @db.VarChar(100)
   creditUnit Int @map("credit_unit")
-  modCoord String? @map("mod_coord") @db.Char(4)
+  modCoord String @map("mod_coord") @db.Char(4)
+
+  modModCoordFk staff @relation("modModCoordFk", fields: [modCoord], references: [staffNo], onDelete: NoAction, onUpdate: NoAction, map: "mod_mod_coord_fk")
+  preRequisiteModCodeFk preRequisite[] @relation("preRequisiteModCodeFk")
+  preRequisiteRequisiteFk preRequisite[] @relation("preRequisiteRequisiteFk")
+  studentModCode studentModPerformance[] @relation("studentModCode")
+
 }
 
 
@@ -95,7 +115,8 @@ model staffDependent {
   staffNo         String  @map("staff_no") @db.VarChar(4)
   dependentName   String  @map("dependent_name") @db.VarChar(30)
   relationship    String  @db.VarChar(20)
-  
+  staff           staff   @relation(fields: [staffNo], references: [staffNo], onDelete: NoAction, onUpdate: NoAction, map: "staff_dependent_staff_no_fk")
+
   @@id([staffNo, dependentName])  
   @@map("staff_dependent")
 }
@@ -104,6 +125,10 @@ model preRequisite {
   modCode         String  @map("mod_code") @db.VarChar(10)
   requisite       String  @db.VarChar(10)
   
+
+  preRequisiteModCodeFk module @relation("preRequisiteModCodeFk", fields: [modCode], references: [modCode], onDelete: NoAction, onUpdate: NoAction, map: "pre_requisite_mod_code_fk")
+  preRequisiteRequisiteFk module @relation("preRequisiteRequisiteFk", fields: [requisite], references: [modCode], onDelete: NoAction, onUpdate: NoAction, map: "pre_requisite_requisite_fk")
+
   @@id([modCode, requisite])  
   @@map("pre_requisite")
 }
@@ -112,6 +137,7 @@ model country {
   countryName     String  @id @map("country_name") @db.VarChar(4)
   language        String  @db.VarChar(30)
   region          String  @db.VarChar(20)
+  studentNationalityFk student[] @relation("studentNationalityFk")
 } 
 
 model student {
@@ -124,6 +150,10 @@ model student {
   dob             DateTime@db.Date
   nationality     String  @db.VarChar(30)
   crseCode        String  @map("crse_code") @db.VarChar(5)
+
+  studentCrseCodeFk course @relation("studentCrseCodeFk", fields: [crseCode], references: [crseCode], onDelete: NoAction, onUpdate: NoAction, map: "student_crse_code_fk")
+  studentNationalityFk country @relation("studentNationalityFk", fields: [nationality], references: [countryName], onDelete: NoAction, onUpdate: NoAction, map: "student_nationality_fk")
+  studentModAdmNo studentModPerformance[] @relation("studentModAdmNo")
 } 
 
 model studentModPerformance {
@@ -132,5 +162,8 @@ model studentModPerformance {
   mark            Int
   grade           String  @db.Char(2)
 
+
+  studentModAdmNo student @relation("studentModAdmNo", fields: [admNo], references: [admNo], onDelete: NoAction, onUpdate: NoAction, map: "student_mod_adm_no")
+  studentModCode module @relation("studentModCode", fields: [modRegistered], references: [modCode], onDelete: NoAction, onUpdate: NoAction, map: "student_mod_code")
   @@map("student_mod_performance")
 }
